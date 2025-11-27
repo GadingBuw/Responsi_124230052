@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/login_page.dart';
-import 'screens/restaurant_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Init Hive
   await Hive.initFlutter();
-  await Hive.openBox('usersBox');   // Untuk simpan user
-  await Hive.openBox('sessionBox'); // Untuk simpan status login
+  await Hive.openBox('userBox');
+  await Hive.openBox('favoriteBox');
 
   runApp(const MyApp());
 }
@@ -20,26 +19,51 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Responsi Restoran',
       debugShowCheckedModeBanner: false,
+      title: 'Restaurant App Premium',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
-        useMaterial3: true,
+        useMaterial3: true, 
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange,
+          primary: Colors.orange.shade800,
+          secondary: Colors.orangeAccent,
+          surface: Colors.grey.shade50,
+        ),
+        scaffoldBackgroundColor: Colors.grey.shade50,
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.orange.shade800,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange.shade800,
+            foregroundColor: Colors.white,
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none, 
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.orange.shade800, width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        ),
       ),
-      home: const CheckAuth(),
+      home: const LoginPage(),
     );
-  }
-}
-
-class CheckAuth extends StatelessWidget {
-  const CheckAuth({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final sessionBox = Hive.box('sessionBox');
-    bool isLoggedIn = sessionBox.get('isLoggedIn', defaultValue: false);
-    
-    // Cek Login [cite: 40]
-    return isLoggedIn ? const RestaurantsPage() : const LoginPage();
   }
 }

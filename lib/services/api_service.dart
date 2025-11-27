@@ -1,29 +1,42 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/detail_restoran_model.dart';
-import '../models/restoran_model.dart';
+import '../models/restaurant.dart';
+import '../models/restaurant_detail.dart';
 
 class ApiService {
-  final String baseUrl = "https://restaurant-api.dicoding.dev/";
+  static const String _baseUrl = 'https://restaurant-api.dicoding.dev';
 
-  Future<List<Restaurants>> getRestaurants() async {
-    final response = await http.get(Uri.parse('$baseUrl/#/?id=get-list-of-restaurant'));
+  Future<List<Restaurant>> getList() async {
+    final response = await http.get(Uri.parse('$_baseUrl/list'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      List<dynamic> list = data['restaurants'];
-      return list.map((e) => Restaurants.fromJson(e)).toList();
+      return (data['restaurants'] as List)
+          .map((json) => Restaurant.fromJson(json))
+          .toList();
     } else {
-      throw Exception("Failed to load restaurants");
+      throw Exception('Gagal memuat list restaurant');
     }
   }
 
-  Future<DetailRestaurants> getDetailRestaurants(String id) async {
-    final response = await http.get(Uri.parse('$baseUrl/#/?id=get-detail-of-restaurant'));
+  Future<List<Restaurant>> search(String query) async {
+    final response = await http.get(Uri.parse('$_baseUrl/search?q=$query'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return DetailRestaurants.fromJson(data['detail'][0]);
+      return (data['restaurants'] as List)
+          .map((json) => Restaurant.fromJson(json))
+          .toList();
     } else {
-      throw Exception("Failed to load detail");
+      throw Exception('Gagal mencari restaurant');
+    }
+  }
+
+  Future<RestaurantDetail> getDetail(String id) async {
+    final response = await http.get(Uri.parse('$_baseUrl/detail/$id'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return RestaurantDetail.fromJson(data['restaurant']);
+    } else {
+      throw Exception('Gagal memuat detail restaurant');
     }
   }
 }

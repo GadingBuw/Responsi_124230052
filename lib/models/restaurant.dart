@@ -1,12 +1,12 @@
-class Restaurants {
+class Restaurant {
   final String id;
   final String name;
   final String description;
   final String pictureId;
   final String city;
-  final String rating;
+  final double rating;
 
-  Restaurants({
+  Restaurant({
     required this.id,
     required this.name,
     required this.description,
@@ -15,14 +15,14 @@ class Restaurants {
     required this.rating,
   });
 
-  factory Restaurants.fromJson(Map<String, dynamic> json) {
-    return Restaurants(
+  factory Restaurant.fromJson(Map<String, dynamic> json) {
+    return Restaurant(
       id: json['id'],
       name: json['name'],
       description: json['description'],
       pictureId: json['pictureId'],
       city: json['city'],
-      rating: json['rating'].toDouble(),
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
